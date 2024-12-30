@@ -365,6 +365,49 @@
                 S2-->|X<sub>3</sub>|S4
                 S4-->|X<sub>4</sub>|S5
                 S3-->|X<sub>5</sub>|S1
+
+            
+        - 其中S<sub>i</sub>是状态, X<sub>i</sub>是非终结符.
+        - 为什么识别活前缀不考虑终结符呢? 
+            - 因为要和ACTION分开, 避免在状态转移逻辑中的冲突
+
+        - **构造方法**
+            - 首先求出每个表达式的**项目**
+
+                举例:
+
+                表达式: S->aAcBe
+
+                项目:
+                - S->●aAcBe
+                - S->a●AcBe
+                - S->aA●cBe
+                - S->aAc●Be
+                - S->aAcB●e
+                - S->aAcBe●
+
+                项目是分析过程中的某一时刻已经归约的部分和等待归约部分,
+                其中●前已经被归约,●后等待归约
+            - 朴素的方法:根据项目写出NFA,然后确定化为DFA
+                - 规定项目S->●aAcBe为NFA的唯一初态
+                - 任何项目均认为是NFA的终态(活前缀识别态)
+                - 
+            - 更快的方法:
+    - **ACTION**
+        - ACTION表一般只用终结符
+        - 一共有移进和归约, 接受和出错四种动作
+        - 当遇到ACTION[S<sub>i</sub>,a]时:
+            - 移进 (ACTION[S<sub>i</sub>,a] = S<sub>j</sub>):
+
+                将a推进栈并设置新的栈顶状态S<sub>j</sub>
+            - 归约 (ACTION[S<sub>i</sub>,a] = r<sub>c</sub>):
+
+                使用第c个文法规则 (假设是 A→β) 归约符号栈最顶部的β (弹出β, 把A推进栈, 同时弹出和β相同长度的状态),
+                并设置新的栈顶状态Sj = GOTO[S<sub>i-|β|</sub>,A]
+            - 接受 (ACTION[S<sub>i</sub>,a] = accept)
+            - 出错 (ACTION[S<sub>i</sub>,a] 为空白)
+        
+        
 ### SLR(1)
 ### LR(1)
 
